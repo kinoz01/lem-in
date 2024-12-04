@@ -73,12 +73,18 @@ func main() {
 			graph.Rooms[from].Edges[to] = 1
 		}
 	}
-	fmt.Println(graph.Rooms)
 
 	paths := ComputePaths(graph)
 	if paths == nil {
 		fmt.Println("No paths found")
 		os.Exit(1)
+	}
+	
+	for i, l := range paths.AllPaths {
+		fmt.Printf("List %d:\n", i+1)
+		for e := l.Front(); e != nil; e = e.Next() {
+			fmt.Println(e.Value)
+		}
 	}
 	SimulateAnts(paths, graph.Ants)
 }
@@ -315,6 +321,7 @@ func PathsFromGraph(graph *Graph) *Paths {
 	paths := new(Paths)
 	paths.NumPaths = graph.Exits.Len()
 	paths.AllPaths = make([]*list.List, paths.NumPaths)
+	fmt.Println("+++++++++++", paths.NumPaths)
 	i := 0
 	for link := graph.Exits.Front(); link != nil; link = link.Next() {
 		p := UnrollPath(graph, link.Value.(string))
@@ -386,6 +393,9 @@ func SimulateAnts(paths *Paths, antCount int) {
 	antNum, activeAnt := 1, 1
 	antPositions := make(map[int]*list.Element)
 	for j := 0; j < paths.TotalSteps; j++ {
+		if len(antPositions) > 0 {
+			fmt.Println()
+		}
 		for k := activeAnt; k <= lastAnt; k++ {
 			if pos, ok := antPositions[k]; ok && pos != nil {
 				fmt.Printf("L%d-%v ", k, pos.Value)
@@ -411,9 +421,7 @@ func SimulateAnts(paths *Paths, antCount int) {
 			}
 			antNum++
 		}
-		if len(antPositions) > 0 {
-			fmt.Println()
-		}
+		
 		lastAnt = antNum - 1
 	}
 }
