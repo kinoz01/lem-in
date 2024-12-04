@@ -80,12 +80,12 @@ func main() {
 		os.Exit(1)
 	}
 	
-	for i, l := range paths.AllPaths {
+	/* for i, l := range paths.AllPaths {
 		fmt.Printf("List %d:\n", i+1)
 		for e := l.Front(); e != nil; e = e.Next() {
 			fmt.Println(e.Value)
 		}
-	}
+	} */
 	SimulateAnts(paths, graph.Ants)
 }
 
@@ -319,18 +319,29 @@ func GetNextPaths(graph *Graph) *Paths {
 // PathsFromGraph constructs the paths from the graph.
 func PathsFromGraph(graph *Graph) *Paths {
 	paths := new(Paths)
-	paths.NumPaths = graph.Exits.Len()
-	paths.AllPaths = make([]*list.List, paths.NumPaths)
-	fmt.Println("+++++++++++", paths.NumPaths)
-	i := 0
+	uniquePaths := make(map[string]*list.List)
 	for link := graph.Exits.Front(); link != nil; link = link.Next() {
 		p := UnrollPath(graph, link.Value.(string))
-		paths.AllPaths[i] = p
-		i++
+		pathStr := PathToString(p)
+		uniquePaths[pathStr] = p
 	}
+	// Convert the map to a slice
+	paths.AllPaths = make([]*list.List, 0, len(uniquePaths))
+	for _, p := range uniquePaths {
+		paths.AllPaths = append(paths.AllPaths, p)
+	}
+	paths.NumPaths = len(paths.AllPaths)
 	sort.Slice(paths.AllPaths, func(i, j int) bool { return paths.AllPaths[i].Len() < paths.AllPaths[j].Len() })
 	paths.TotalSteps = paths.calculateSteps(graph.Ants)
 	return paths
+}
+
+func PathToString(path *list.List) string {
+	var nodes []string
+	for e := path.Front(); e != nil; e = e.Next() {
+		nodes = append(nodes, e.Value.(string))
+	}
+	return strings.Join(nodes, "->")
 }
 
 // UnrollPath reconstructs a path from the end node to the start node.

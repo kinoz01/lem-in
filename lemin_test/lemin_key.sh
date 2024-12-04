@@ -28,6 +28,7 @@ run_with_timeout() {
         text "Execution of $file timed out or was interrupted."
     fi
     wait_for_key
+    rm leminTest.txt lemin.txt lemi.txt
 }
 
 test_audit() {
