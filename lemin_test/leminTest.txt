@@ -1,8 +1,0 @@
-L1-t L2-0 L3-h 
-L1-E L2-o L3-A L4-t L5-0 L6-h 
-L1-a L2-n L3-c L4-E L5-o L6-A L7-t L8-0 L9-h 
-L1-m L2-e L3-k L4-a L5-n L6-c L7-E L8-o L9-A L10-t 
-L1-end L2-end L3-end L4-m L5-e L6-k L7-a L8-n L9-c L10-E 
-L4-end L5-end L6-end L7-m L8-e L9-k L10-a 
-L7-end L8-end L9-end L10-m 
-L10-end 
