@@ -1,5 +1,5 @@
 # Global variable for timeout duration
-TIMEOUT_DURATION="5s"  # Set this to the desired default timeout duration
+TIMEOUT_DURATION="1s"  # Set this to the desired default timeout duration
 
 wait_for_key() {
     while true; do

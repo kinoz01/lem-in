@@ -22,8 +22,8 @@ lemin_lines=$(wc -l < lemin.txt)
 lemin_words=$(wc -w < lemin.txt)
 
 # Print the results
-echo "leminTest: $leminTest_lines lines, $leminTest_words words"
-echo "lemin    : $lemin_lines lines, $lemin_words words"
+echo "leminTest: $leminTest_lines frames, $leminTest_words moves"
+echo "lemin    : $lemin_lines frames, $lemin_words moves"
 
 
 if [ "$leminTest_lines" -eq "$lemin_lines" ] && [ "$leminTest_words" -eq "$lemin_words" ]; then
