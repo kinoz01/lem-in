@@ -3,7 +3,7 @@ TIMEOUT_DURATION="5s"  # Set this to the desired default timeout duration
 
 wait_for_key() {
     while true; do
-        read -rsn 3 key < /dev/tty
+        read -sn 3 key < /dev/tty
         if [[ "$key" == $'\e[C' ]] || [[ "$key" == $'\e[D' ]] || [[ "$key" == $'\e[B' ]]; then
             break
         fi
