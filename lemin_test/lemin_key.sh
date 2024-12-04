@@ -64,52 +64,52 @@ test_audit() {
 
 test_lemin() {
     text 'across'
-    run_with_timeout 'across.txt'
+    run_with_timeout 'cstm/across.txt'
 
     text 'big1'
-    run_with_timeout 'big_1.txt'
+    run_with_timeout 'cstm/big_1.txt'
 
     text 'big2'
-    run_with_timeout 'big_2.txt'
+    run_with_timeout 'cstm/big_2.txt'
 
     text 'test 1'
-    run_with_timeout 'test1.txt'
+    run_with_timeout 'cstm/test1.txt'
 
     text 'test 2'
-    run_with_timeout 'test2.txt'
+    run_with_timeout 'cstm/test2.txt'
 
     text 'test 3'
-    run_with_timeout 'test3.txt'
+    run_with_timeout 'cstm/test3.txt'
 
     text 'example5_8'
-    run_with_timeout 'exmpl5_8'
+    run_with_timeout 'cstm/exmpl5_8'
 
     text 'large-number'
-    run_with_timeout 'large-number'
+    run_with_timeout 'cstm/large-number'
 
     text 'pluto1'
-    run_with_timeout 'pluto_1'
+    run_with_timeout 'cstm/pluto_1'
 
     text 'pluto6'
-    run_with_timeout 'pluto_6'
+    run_with_timeout 'cstm/pluto_6'
 
     text 'pluto40'
-    run_with_timeout 'pluto_40'
+    run_with_timeout 'cstm/pluto_40'
 
     text 'pluto400'
-    run_with_timeout 'pluto_400'
+    run_with_timeout 'cstm/pluto_400'
 
     text 'pylone1'
-    run_with_timeout 'pylone_1'
+    run_with_timeout 'cstm/pylone_1'
 
     text 'pylone6'
-    run_with_timeout 'pylone_6'
+    run_with_timeout 'cstm/pylone_6'
 
     text 'pylone40'
-    run_with_timeout 'pylone_20'
+    run_with_timeout 'cstm/pylone_20'
 
     text 'pylone400'
-    run_with_timeout 'pylone_400'
+    run_with_timeout 'cstm/pylone_400'
 }
 
 alias audit='test_audit'

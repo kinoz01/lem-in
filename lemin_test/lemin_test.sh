@@ -11,20 +11,15 @@ input_file=$1
 
 # Run leminTest and lemin, saving their outputs to respective files
 ./leminTest "$input_file" > leminTest.txt
-./lemin "$input_file" > lemin.txt
+./lemin "$input_file" > lemi.txt
 
-# Extract content after two consecutive newlines for lemin.txt
-awk 'BEGIN {found=0} 
-     { 
-       if ($0 == "") {found=1}  # Detect a single blank line
-       if (found && $0 != "") print  # Print lines after the blank line, but skip any additional blank lines
-     }' lemin.txt > lemin_i.txt
+grep '^L' lemi.txt > lemin.txt
 
 # Count number of lines and words for both files
 leminTest_lines=$(wc -l < leminTest.txt)
 leminTest_words=$(wc -w < leminTest.txt)
-lemin_lines=$(wc -l < lemin_i.txt)
-lemin_words=$(wc -w < lemin_i.txt)
+lemin_lines=$(wc -l < lemin.txt)
+lemin_words=$(wc -w < lemin.txt)
 
 # Print the results
 echo "leminTest: $leminTest_lines lines, $leminTest_words words"
