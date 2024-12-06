@@ -18,7 +18,7 @@ type Graph struct {
 
 // Node represents a room in the graph.
 type Node struct {
-	Edges             map[string]byte
+	Edges             map[string]bool
 	Prev              string
 	EdgeIn, EdgeOut   string
 	PriceIn, PriceOut int
@@ -45,8 +45,6 @@ type PriorityQueue []*PQNode
 
 func Run() {
 	graph := GetGraph()
-	PrintGraph(graph)
-	fmt.Println("++++++++++++++")
 	paths := ComputePaths(graph)
 	if paths == nil {
 		fmt.Println("No paths found")
@@ -55,10 +53,3 @@ func Run() {
 
 	SimulateAnts(paths, graph.Ants)
 }
-
-/* for i, l := range paths.AllPaths {
-	fmt.Printf("List %d:\n", i+1)
-	for e := l.Front(); e != nil; e = e.Next() {
-		fmt.Println(e.Value)
-	}
-} */

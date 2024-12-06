@@ -83,13 +83,13 @@ func ReadFile(filePath string) (*Graph, string, error) {
 			}
 			// Add nodes and edges to the graph
 			if graph.Rooms[from] == nil {
-				graph.Rooms[from] = &Node{Edges: make(map[string]byte), Prev: "L"}
+				graph.Rooms[from] = &Node{Edges: make(map[string]bool), Prev: "L"}
 			}
 			if graph.Rooms[to] == nil {
-				graph.Rooms[to] = &Node{Edges: make(map[string]byte), Prev: "L"}
+				graph.Rooms[to] = &Node{Edges: make(map[string]bool), Prev: "L"}
 			}
-			graph.Rooms[from].Edges[to] = 1
-			graph.Rooms[to].Edges[from] = 1
+			graph.Rooms[from].Edges[to] = true
+			graph.Rooms[to].Edges[from] = true
 		}
 	}
 

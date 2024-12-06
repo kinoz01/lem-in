@@ -139,7 +139,6 @@ func SplitNode(graph *Graph, v string) {
 func Dijkstra(graph *Graph) bool {
 	pq := make(PriorityQueue, 0, 100)
 	ResetGraph(graph)
-	PrintGraph(graph)
 	heap.Push(&pq, &PQNode{Cost: 0, Room: graph.Start})
 	for pq.Len() > 0 {
 		current := heap.Pop(&pq).(*PQNode)
