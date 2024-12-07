@@ -50,3 +50,15 @@ func PrintPriorityQueue(pq PriorityQueue) {
 		fmt.Printf("  Node %d: Room=%s, Cost=%d, Index=%d\n", i+1, node.Room, node.Cost, node.Index)
 	}
 }
+
+// PrintNode prints the details of a Node in a readable format.
+func PrintNode(node *Node, name string) {
+	fmt.Printf("Node: %s\n", name)
+	fmt.Println("Edges:", node.Edges)
+	fmt.Printf("Prev: %s\n", node.Prev)
+	fmt.Printf("EdgeIn: %s, EdgeOut: %s\n", node.EdgeIn, node.EdgeOut)
+	fmt.Printf("PriceIn: %d, PriceOut: %d\n", node.PriceIn, node.PriceOut)
+	fmt.Printf("CostIn: %d, CostOut: %d\n", node.CostIn, node.CostOut)
+	fmt.Printf("Split: %v\n", node.Split)
+	fmt.Println("------------------------")
+}
