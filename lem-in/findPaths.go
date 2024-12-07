@@ -45,7 +45,7 @@ func Dijkstra(graph *Graph) bool {
 	ResetGraph(graph)
 	heap.Push(&pq, &PQNode{Cost: 0, Room: graph.Start})
 	for pq.Len() > 0 {
-		current := heap.Remove(&pq, 0).(*PQNode)
+		current := heap.Pop(&pq).(*PQNode)
 		v := current.Room
 		for w := range graph.Rooms[v].Edges {
 			RelaxEdge(graph, &pq, v, w)
