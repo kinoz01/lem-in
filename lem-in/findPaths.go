@@ -39,6 +39,22 @@ func GetNextPaths(graph *Graph) *Paths {
 	return PathsFromGraph(graph)
 }
 
+// Dijkstra's algorithm to find the shortest path.
+func Dijkstra(graph *Graph) bool {
+	pq := make(PriorityQueue, 0, 100)
+	ResetGraph(graph)
+	heap.Push(&pq, &PQNode{Cost: 0, Room: graph.Start})
+	for pq.Len() > 0 {
+		current := heap.Remove(&pq, 0).(*PQNode)
+		v := current.Room
+		for w := range graph.Rooms[v].Edges {
+			RelaxEdge(graph, &pq, v, w)
+		}
+	}
+	SetPrices(graph)
+	return graph.Rooms[graph.End].EdgeIn != "L"
+}
+
 // PathsFromGraph constructs the paths from the graph.
 func PathsFromGraph(graph *Graph) *Paths {
 	paths := new(Paths)
@@ -135,21 +151,6 @@ func SplitNode(graph *Graph, v string) {
 	}
 }
 
-// Dijkstra's algorithm to find the shortest path.
-func Dijkstra(graph *Graph) bool {
-	pq := make(PriorityQueue, 0, 100)
-	ResetGraph(graph)
-	heap.Push(&pq, &PQNode{Cost: 0, Room: graph.Start})
-	for pq.Len() > 0 {
-		current := heap.Pop(&pq).(*PQNode)
-		v := current.Room
-		for w := range graph.Rooms[v].Edges {
-			RelaxEdge(graph, &pq, v, w)
-		}
-	}
-	SetPrices(graph)
-	return graph.Rooms[graph.End].EdgeIn != "L"
-}
 
 // ResetGraph resets the graph costs and parents before running Dijkstra's algorithm.
 func ResetGraph(graph *Graph) {
