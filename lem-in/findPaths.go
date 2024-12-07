@@ -10,22 +10,22 @@ import (
 // ComputePaths computes all possible paths using Suurballe's algorithm.
 func ComputePaths(graph *Graph) *Paths {
 
-	var bestPaths, newPaths *Paths
+	var bestPaths *Paths
 	if bestPaths = GetNextPaths(graph); bestPaths == nil {
 		return nil
 	}
 
-	pathCount := 1
-	for pathCount < graph.Ants {
-		if newPaths = GetNextPaths(graph); newPaths == nil {
-			break
-		}
+	// pathCount := 1
+	// for pathCount < graph.Ants {
+	// 	if newPaths = GetNextPaths(graph); newPaths == nil {
+	// 		break
+	// 	}
 
-		if newPaths.TotalSteps < bestPaths.TotalSteps {
-			bestPaths = newPaths
-		}
-		pathCount++
-	}
+	// 	if newPaths.TotalSteps < bestPaths.TotalSteps {
+	// 		bestPaths = newPaths
+	// 	}
+	// 	pathCount++
+	// }
 
 	return bestPaths
 }
