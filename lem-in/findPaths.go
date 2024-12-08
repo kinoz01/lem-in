@@ -3,6 +3,7 @@ package lemin
 import (
 	"container/heap"
 	"container/list"
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -15,17 +16,17 @@ func ComputePaths(graph *Graph) *Paths {
 		return nil
 	}
 
-	pathCount := 1
-	for pathCount < graph.Ants {
-		if newPaths = GetNextPaths(graph); newPaths == nil {
-			break
-		}
+	// pathCount := 1
+	// for pathCount < graph.Ants {
+	// 	if newPaths = GetNextPaths(graph); newPaths == nil {
+	// 		break
+	// 	}
 
-		if newPaths.TotalSteps < bestPaths.TotalSteps {
-			bestPaths = newPaths
-		}
-		pathCount++
-	}
+	// 	if newPaths.TotalSteps < bestPaths.TotalSteps {
+	// 		bestPaths = newPaths
+	// 	}
+	// 	pathCount++
+	// }
 
 	return bestPaths
 }
@@ -44,21 +45,21 @@ func Dijkstra(graph *Graph) bool {
 	pq := make(PriorityQueue, 0, 100)
 	ResetGraph(graph)
 	heap.Push(&pq, &PQNode{Cost: 0, Room: graph.Start})
-	//var i int
+	var i int
 	for pq.Len() > 0 {
 		current := heap.Pop(&pq).(*PQNode)
 		v := current.Room
-		//fmt.Println("---------------------", i, "-------------------")
+		fmt.Println("---------------------", i, "-------------------")
 		for w := range graph.Rooms[v].Edges {
-			//fmt.Println(v, ",", w)
-			//PrintPriorityQueue(pq)
-			//PrintGraph(graph)
+			fmt.Println(v, ",", w)
+			PrintPriorityQueue(pq)
+			PrintGraph(graph)
 			RelaxEdge(graph, &pq, v, w)
-			//fmt.Println(v, "----------------------------------", w)
-			//PrintPriorityQueue(pq)
-			//PrintGraph(graph)
+			fmt.Println(v, "----------------------------------", w)
+			PrintPriorityQueue(pq)
+			PrintGraph(graph)
 		}
-		//i++
+		i++
 	}
 	SetPrices(graph)
 	return graph.Rooms[graph.End].EdgeIn != "L"
@@ -179,16 +180,11 @@ func RelaxEdge(graph *Graph, pq *PriorityQueue, v, w string) {
 	if v == graph.End || w == graph.Start || nodeW.Prev == v {
 		return
 	}
-	if nodeV.Prev == w && nodeV.CostIn < Infinity && (1+nodeW.CostOut > nodeV.CostIn+nodeV.PriceIn-nodeW.PriceOut) {
-		nodeW.EdgeOut = v
-		nodeW.CostOut = nodeV.CostIn - 1 + nodeV.PriceIn - nodeW.PriceOut
-		heap.Push(pq, &PQNode{Cost: nodeW.CostOut, Room: w})
-		RelaxHiddenEdge(graph, pq, w)
-	} else if nodeV.Prev != w && nodeV.CostOut < Infinity && nodeV.CostOut+nodeV.PriceOut+1 < nodeW.CostIn+nodeW.PriceIn {
+	if  nodeV.Prev != w && nodeV.CostOut < Infinity && nodeV.CostOut+nodeV.PriceOut+1 < nodeW.CostIn+nodeW.PriceIn {
 		nodeW.EdgeIn = v
 		nodeW.CostIn = nodeV.CostOut + 1 + nodeV.PriceOut - nodeW.PriceIn
 		heap.Push(pq, &PQNode{Cost: nodeW.CostIn, Room: w})
-		RelaxHiddenEdge(graph, pq, w)
+		//RelaxHiddenEdge(graph, pq, w)
 	}
 }
 
