@@ -50,6 +50,5 @@ func Run() {
 		fmt.Println("No paths found")
 		os.Exit(1)
 	}
-
 	SimulateAnts(paths, graph.Ants)
 }
