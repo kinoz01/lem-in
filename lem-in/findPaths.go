@@ -16,17 +16,17 @@ func ComputePaths(graph *Graph) *Paths {
 		return nil
 	}
 
-	// pathCount := 1
-	// for pathCount < graph.Ants {
-	// 	if newPaths = GetNextPaths(graph); newPaths == nil {
-	// 		break
-	// 	}
+	pathCount := 1
+	for pathCount < graph.Ants {
+		if newPaths = GetNextPaths(graph); newPaths == nil {
+			break
+		}
 
-	// 	if newPaths.TotalSteps < bestPaths.TotalSteps {
-	// 		bestPaths = newPaths
-	// 	}
-	// 	pathCount++
-	// }
+		if newPaths.TotalSteps < bestPaths.TotalSteps {
+			bestPaths = newPaths
+		}
+		pathCount++
+	}
 
 	return bestPaths
 }
@@ -180,11 +180,16 @@ func RelaxEdge(graph *Graph, pq *PriorityQueue, v, w string) {
 	if v == graph.End || w == graph.Start || nodeW.Prev == v {
 		return
 	}
-	if  nodeV.Prev != w && nodeV.CostOut < Infinity && nodeV.CostOut+nodeV.PriceOut+1 < nodeW.CostIn+nodeW.PriceIn {
+	if nodeV.Prev == w && nodeV.CostIn < Infinity && (1+nodeW.CostOut > nodeV.CostIn+nodeV.PriceIn-nodeW.PriceOut) {
+		nodeW.EdgeOut = v
+		nodeW.CostOut = nodeV.CostIn - 1 + nodeV.PriceIn - nodeW.PriceOut
+		heap.Push(pq, &PQNode{Cost: nodeW.CostOut, Room: w})
+		RelaxHiddenEdge(graph, pq, w)
+	} else if nodeV.Prev != w && nodeV.CostOut < Infinity && nodeV.CostOut+nodeV.PriceOut+1 < nodeW.CostIn+nodeW.PriceIn {
 		nodeW.EdgeIn = v
 		nodeW.CostIn = nodeV.CostOut + 1 + nodeV.PriceOut - nodeW.PriceIn
 		heap.Push(pq, &PQNode{Cost: nodeW.CostIn, Room: w})
-		//RelaxHiddenEdge(graph, pq, w)
+		RelaxHiddenEdge(graph, pq, w)
 	}
 }
 
