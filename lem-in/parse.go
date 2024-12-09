@@ -43,8 +43,9 @@ func ReadFile(filePath string) (*Graph, string, error) {
 
 	lines := strings.Split(strings.TrimSpace(string(fileBytes)), "\n")
 
-	graph := NewGraph()
+	graph := &Graph{Rooms: make(map[string]*Node)}
 	graph.Exits = list.New()
+	var startFound, endFound bool
 
 	for i, line := range lines {
 		line = strings.TrimSpace(line)
@@ -57,20 +58,31 @@ func ReadFile(filePath string) (*Graph, string, error) {
 			continue
 		}
 		if line == "##start" {
+			if startFound {
+				return nil, "", fmt.Errorf("can't have more than one start")
+			}
 			graph.Start, err = ParseStartEnd("Start", i, lines)
 			if err != nil {
 				return nil, "", err
 			}
+			startFound = true
 			continue
 		}
 		if line == "##end" {
+			if endFound {
+				return nil, "", fmt.Errorf("can't have more than one end")
+			}
 			graph.End, err = ParseStartEnd("End", i, lines)
 			if err != nil {
 				return nil, "", err
 			}
+			endFound =true
 			continue
 		}
-		if line == "" || strings.HasPrefix(line, "#") || strings.HasPrefix(line, "L") {
+		if  strings.HasPrefix(line, "L") {
+			return nil, "", fmt.Errorf("can't start a room name with L")
+		}
+		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 
@@ -100,6 +112,7 @@ func ReadFile(filePath string) (*Graph, string, error) {
 	if len(graph.Rooms) == 0 {
 		return nil, "", fmt.Errorf("can't find linked rooms")
 	}
+	// Check if start/end rooms are linked to a nother node.
 	if _, startExist := graph.Rooms[graph.Start]; !startExist {
 		return nil, "", fmt.Errorf("start room isn't linked")
 	}
@@ -124,39 +137,4 @@ func ParseStartEnd(which string, i int, lines []string) (string, error) {
 		return "", fmt.Errorf("%s room is missing", which)
 	}
 	return roomName, nil
-}
-
-// NewGraph initializes a new graph.
-func NewGraph() *Graph {
-	return &Graph{Rooms: make(map[string]*Node)}
-}
-
-// Implementation of heap.Interface for PriorityQueue
-func (pq PriorityQueue) Len() int { return len(pq) }
-
-func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].Cost < pq[j].Cost
-}
-
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].Index = i
-	pq[j].Index = j
-}
-
-func (pq *PriorityQueue) Push(x interface{}) {
-	n := len(*pq)
-	item := x.(*PQNode)
-	item.Index = n
-	*pq = append(*pq, item)
-}
-
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
-	n := len(old)
-	item := old[n-1]
-	old[n-1] = nil  // Avoid out of range
-	item.Index = -1 // For safety
-	*pq = old[0 : n-1]
-	return item
 }

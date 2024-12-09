@@ -2,7 +2,6 @@ package lemin
 
 import "fmt"
 
-// PrintGraph prints all information about the Graph
 func PrintGraph(graph *Graph) {
 	fmt.Println("Graph:")
 	fmt.Printf("Start Room: %s\n", graph.Start)
@@ -24,7 +23,6 @@ func PrintGraph(graph *Graph) {
 	}
 }
 
-// PrintPaths prints all information about the Paths
 func PrintPaths(paths *Paths) {
 	fmt.Println("Paths:")
 	fmt.Printf("Number of Paths: %d\n", paths.NumPaths)
@@ -33,9 +31,12 @@ func PrintPaths(paths *Paths) {
 	for i, path := range paths.AllPaths {
 		fmt.Printf("  Path %d: ", i+1)
 		for p := path.Front(); p != nil; p = p.Next() {
-			fmt.Printf("%v -> ", p.Value)
+			fmt.Printf("%v ", p.Value)
+			if p.Next() != nil {
+				fmt.Print("-> ")
+			}
 		}
-		fmt.Println("end")
+		fmt.Println()
 	}
 	fmt.Println("Ant Assignment:")
 	for i, ants := range paths.Assignment {
@@ -43,7 +44,6 @@ func PrintPaths(paths *Paths) {
 	}
 }
 
-// PrintPriorityQueue prints all information about the PriorityQueue
 func PrintPriorityQueue(pq PriorityQueue) {
 	fmt.Println("Priority Queue:")
 	for i, node := range pq {
@@ -51,7 +51,6 @@ func PrintPriorityQueue(pq PriorityQueue) {
 	}
 }
 
-// PrintNode prints the details of a Node in a readable format.
 func PrintNode(node *Node, name string) {
 	fmt.Printf("Node: %s\n", name)
 	fmt.Println("Edges:", node.Edges)
@@ -60,5 +59,5 @@ func PrintNode(node *Node, name string) {
 	fmt.Printf("PriceIn: %d, PriceOut: %d\n", node.PriceIn, node.PriceOut)
 	fmt.Printf("CostIn: %d, CostOut: %d\n", node.CostIn, node.CostOut)
 	fmt.Printf("Split: %v\n", node.Split)
-	fmt.Println("------------------------")
+	fmt.Println("nodenodenodenodenode")
 }

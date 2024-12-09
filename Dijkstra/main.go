@@ -47,7 +47,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 
-// ResetGraph resets all nodes before running Dijkstra's algorithm.
+// Resets all nodes before running Dijkstra's algorithm.
 func ResetGraph(graph *Graph) {
 	for _, node := range graph.Rooms {
 		node.Prev = ""
@@ -56,16 +56,12 @@ func ResetGraph(graph *Graph) {
 	graph.Rooms[graph.Start].Cost = 0
 }
 
-// RelaxEdge relaxes an edge during Dijkstra's algorithm.
+// Relaxes an edge during Dijkstra's algorithm.
 func RelaxEdge(graph *Graph, pq *PriorityQueue, v, w string) {
 	nodeV := graph.Rooms[v]
 	nodeW := graph.Rooms[w]
 	weight := nodeV.Edges[w]
-	fmt.Println("++++++++", nodeV, nodeV.Cost)
-	fmt.Println("********", nodeW, nodeW.Cost)
-	fmt.Println("^^^^^^^^", weight)
 
-	// Relaxation logic
 	if nodeV.Cost+weight < nodeW.Cost {
 		nodeW.Cost = nodeV.Cost + weight
 		nodeW.Prev = v
@@ -83,12 +79,8 @@ func Dijkstra(graph *Graph) []string {
 	for pq.Len() > 0 {
 		current := heap.Pop(pq).(*PQNode)
 		v := current.Room
-		fmt.Println("---------------")
 		for w := range graph.Rooms[v].Edges {
-			fmt.Println(v, "---------", w)
-			PrintPriorityQueue(pq)
 			RelaxEdge(graph, pq, v, w)
-			PrintPriorityQueue(pq)
 		}
 	}
 
@@ -130,7 +122,7 @@ func main() {
 	graph.Rooms["A"].Edges["B"] = 5
 	graph.Rooms["E"].Edges["C"] = 30
 
-	// make the graph bidirectional)
+	// Make the graph bidirectional
 	AddReversedEdges(graph)
 
 	// Run Dijkstra's algorithm

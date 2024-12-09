@@ -33,15 +33,7 @@ type Paths struct {
 	Assignment           []int // Number of ants assigned to each path
 }
 
-// PQNode is a node in the priority queue used in Dijkstra's algorithm.
-type PQNode struct {
-	Cost  int
-	Index int
-	Room  string
-}
 
-// PriorityQueue implements heap.Interface and holds PQNodes.
-type PriorityQueue []*PQNode
 
 func Run() {
 	graph := GetGraph()

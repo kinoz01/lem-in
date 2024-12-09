@@ -3,7 +3,6 @@ package lemin
 import (
 	"container/heap"
 	"container/list"
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -16,8 +15,8 @@ func ComputePaths(graph *Graph) *Paths {
 		return nil
 	}
 
-	pathCount := 1
-	for pathCount < graph.Ants {
+	minPathFound := 1
+	for minPathFound < graph.Ants {
 		if newPaths = GetNextPaths(graph); newPaths == nil {
 			break
 		}
@@ -25,7 +24,7 @@ func ComputePaths(graph *Graph) *Paths {
 		if newPaths.TotalSteps < bestPaths.TotalSteps {
 			bestPaths = newPaths
 		}
-		pathCount++
+		minPathFound++
 	}
 
 	return bestPaths
@@ -36,6 +35,7 @@ func GetNextPaths(graph *Graph) *Paths {
 	if !Dijkstra(graph) {
 		return nil
 	}
+	SetPrices(graph)
 	CachePath(graph)
 	return PathsFromGraph(graph)
 }
@@ -45,24 +45,68 @@ func Dijkstra(graph *Graph) bool {
 	pq := make(PriorityQueue, 0, 100)
 	ResetGraph(graph)
 	heap.Push(&pq, &PQNode{Cost: 0, Room: graph.Start})
-	var i int
+
 	for pq.Len() > 0 {
-		current := heap.Pop(&pq).(*PQNode)
-		v := current.Room
-		fmt.Println("---------------------", i, "-------------------")
-		for w := range graph.Rooms[v].Edges {
-			fmt.Println(v, ",", w)
-			PrintPriorityQueue(pq)
-			PrintGraph(graph)
-			RelaxEdge(graph, &pq, v, w)
-			fmt.Println(v, "----------------------------------", w)
-			PrintPriorityQueue(pq)
-			PrintGraph(graph)
+		currentNode := heap.Pop(&pq).(*PQNode).Room
+
+		for neighbor := range graph.Rooms[currentNode].Edges {
+			RelaxEdge(graph, &pq, currentNode, neighbor)
 		}
-		i++
 	}
-	SetPrices(graph)
 	return graph.Rooms[graph.End].EdgeIn != "L"
+}
+
+// ResetGraph resets the graph costs and parents before running Dijkstra's algorithm.
+func ResetGraph(graph *Graph) {
+	for _, node := range graph.Rooms {
+		node.EdgeIn = "L"
+		node.EdgeOut = "L"
+		node.CostIn = Infinity
+		node.CostOut = Infinity
+	}
+	graph.Rooms[graph.Start].CostIn = 0
+	graph.Rooms[graph.Start].CostOut = 0
+}
+
+// RelaxEdge relaxes the edges during Dijkstra's algorithm.
+func RelaxEdge(graph *Graph, pq *PriorityQueue, current, next string) {
+	currentNode := graph.Rooms[current]
+	nextNode := graph.Rooms[next]
+
+	if current == graph.End || next == graph.Start || nextNode.Prev == current {
+		return
+	}
+
+	if currentNode.Prev == next && currentNode.CostIn+currentNode.PriceIn < nextNode.CostOut+nextNode.PriceOut+1 {
+		nextNode.EdgeOut = current
+		nextNode.CostOut = currentNode.CostIn - 1 + currentNode.PriceIn - nextNode.PriceOut
+		heap.Push(pq, &PQNode{Cost: nextNode.CostOut, Room: next})
+		RelaxHiddenEdge(graph, pq, next)
+	} else if currentNode.Prev != next && currentNode.CostOut+currentNode.PriceOut+1 < nextNode.CostIn+nextNode.PriceIn {
+		nextNode.EdgeIn = current
+		nextNode.CostIn = currentNode.CostOut + 1 + currentNode.PriceOut - nextNode.PriceIn
+		heap.Push(pq, &PQNode{Cost: nextNode.CostIn, Room: next})
+		RelaxHiddenEdge(graph, pq, next)
+	}
+}
+
+// RelaxHiddenEdge further relaxes edges for nodes that have been split.
+func RelaxHiddenEdge(graph *Graph, pq *PriorityQueue, nextNode string) {
+	node := graph.Rooms[nextNode]
+	if node.Split && node.CostIn+node.PriceIn > node.CostOut+node.PriceOut && nextNode != graph.Start {
+		node.EdgeIn = node.EdgeOut
+		node.CostIn = node.CostOut + node.PriceOut - node.PriceIn
+		if node.CostIn != node.CostOut {
+			heap.Push(pq, &PQNode{Cost: node.CostIn, Room: nextNode})
+		}
+	}
+	if !node.Split && node.CostOut+node.PriceOut > node.CostIn+node.PriceIn && nextNode != graph.End {
+		node.EdgeOut = node.EdgeIn
+		node.CostOut = node.CostIn + node.PriceIn - node.PriceOut
+		if node.CostIn != node.CostOut {
+			heap.Push(pq, &PQNode{Cost: node.CostOut, Room: nextNode})
+		}
+	}
 }
 
 // PathsFromGraph constructs the paths from the graph.
@@ -158,57 +202,6 @@ func UnsplitNode(graph *Graph, v string) {
 func SplitNode(graph *Graph, v string) {
 	if v != graph.Start && v != graph.End {
 		graph.Rooms[v].Split = true
-	}
-}
-
-// ResetGraph resets the graph costs and parents before running Dijkstra's algorithm.
-func ResetGraph(graph *Graph) {
-	for _, node := range graph.Rooms {
-		node.EdgeIn = "L"
-		node.EdgeOut = "L"
-		node.CostIn = Infinity
-		node.CostOut = Infinity
-	}
-	graph.Rooms[graph.Start].CostIn = 0
-	graph.Rooms[graph.Start].CostOut = 0
-}
-
-// RelaxEdge relaxes the edges during Dijkstra's algorithm.
-func RelaxEdge(graph *Graph, pq *PriorityQueue, v, w string) {
-	nodeV := graph.Rooms[v]
-	nodeW := graph.Rooms[w]
-	if v == graph.End || w == graph.Start || nodeW.Prev == v {
-		return
-	}
-	if nodeV.Prev == w && nodeV.CostIn < Infinity && (1+nodeW.CostOut > nodeV.CostIn+nodeV.PriceIn-nodeW.PriceOut) {
-		nodeW.EdgeOut = v
-		nodeW.CostOut = nodeV.CostIn - 1 + nodeV.PriceIn - nodeW.PriceOut
-		heap.Push(pq, &PQNode{Cost: nodeW.CostOut, Room: w})
-		RelaxHiddenEdge(graph, pq, w)
-	} else if nodeV.Prev != w && nodeV.CostOut < Infinity && nodeV.CostOut+nodeV.PriceOut+1 < nodeW.CostIn+nodeW.PriceIn {
-		nodeW.EdgeIn = v
-		nodeW.CostIn = nodeV.CostOut + 1 + nodeV.PriceOut - nodeW.PriceIn
-		heap.Push(pq, &PQNode{Cost: nodeW.CostIn, Room: w})
-		RelaxHiddenEdge(graph, pq, w)
-	}
-}
-
-// RelaxHiddenEdge further relaxes edges for nodes that have been split.
-func RelaxHiddenEdge(graph *Graph, pq *PriorityQueue, w string) {
-	node := graph.Rooms[w]
-	if node.Split && node.CostIn > node.CostOut+node.PriceOut-node.PriceIn && w != graph.Start {
-		node.EdgeIn = node.EdgeOut
-		node.CostIn = node.CostOut + node.PriceOut - node.PriceIn
-		if node.CostIn != node.CostOut {
-			heap.Push(pq, &PQNode{Cost: node.CostIn, Room: w})
-		}
-	}
-	if !node.Split && node.CostOut > node.CostIn+node.PriceIn-node.PriceOut && w != graph.End {
-		node.EdgeOut = node.EdgeIn
-		node.CostOut = node.CostIn + node.PriceIn - node.PriceOut
-		if node.CostIn != node.CostOut {
-			heap.Push(pq, &PQNode{Cost: node.CostOut, Room: w})
-		}
 	}
 }
 

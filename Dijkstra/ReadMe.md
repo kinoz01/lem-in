@@ -1,3 +1,8 @@
 Explanation of Dijkstra's Algorithm:
 
-https://excalidraw.com/#json=08Ii2_gOL4R1wWjv1Wn7b,HyMx317QXbnYMbkjG3hSDA
+https://excalidraw.com/#json=8QVhn1KQJYsy5KK0KnC0J,OATPKpadBMzYPfOp-GLClQ
+
+min-heap:
+https://www.youtube.com/watch?v=AFPzC2RJOMk
+
+
