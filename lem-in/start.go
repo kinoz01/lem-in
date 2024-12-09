@@ -33,8 +33,6 @@ type Paths struct {
 	Assignment           []int // Number of ants assigned to each path
 }
 
-
-
 func Run() {
 	graph := GetGraph()
 	paths := ComputePaths(graph)
